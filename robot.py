@@ -10,20 +10,22 @@ class Robot:
     def setZero(self, home):    # Set map value of self.pos to 0
         home[self.pos[0]][self.pos[1]] = 0
 
-    def scan(self, home):
+    def clean(self, home):
 
-        movingRight, movingLeft = False, False
+        movingRight, movingLeft = True, False
 
-        if self.pos == (0,0):
-            if home[0][0] == 1:
+        if self.pos[0] > 15 or self.pos[1] > 15:    # Make sure robot is not in row or column 15 or higher
+            return
+
+        if self.pos[0] % 3 == 0 and self.pos[1] % 3 == 0:   # Assert that robot starts off in a top right corner
+            if home[self.pos[0]][self.pos[1]] == 1:
                 self.setZero(home)
             self.downRight(home)
-            movingRight = True
-            movingLeft = False
         else:
-            movingLeft = True
-            movingRight = False
+            print("Robot should not be here: " + self.pos)
+            print(self.track)
 
+        # Start off in center of 3x3 and look around
         if movingRight:
             # Get values of surrounding area
             up = home[self.pos[0]-1][self.pos[1]]
@@ -35,7 +37,8 @@ class Robot:
             downLeft = home[self.pos[0]+1][self.pos[1]-1]
             downRight = home[self.pos[0]+1][self.pos[1]+1]
 
-            if up == 1:
+            # Follow a cleaning pattern based on which areas are dirty and which are clean
+            if up == 1: 
                 if right == 1:
                     self.up(home)
                     self.downLeft(home)
@@ -118,14 +121,23 @@ class Robot:
                     self.up(home)
                 elif right == 1:
                     self.up(home)
-            if right == 1:
-                pass
 
-            if upRight == 1:
-                pass
+            # Current box is clean
+            # Get to the top left corner of the next 3x3 box
+            current = self.pos[0]   # Get current row location
+            if current == 0:    # Already in correct row; move right
+                self.right(home)
+            elif current == 1:  # Need to go up and to the right
+                self.upRight(home)
+            else:               # Need to go up, then up and to the right
+                self.up(home)
+                self.upRight(home)
 
         else:   # moving left
+            #TODO
             pass
+
+        self.clean(home)
 
 
     def up(self, home):
@@ -184,10 +196,11 @@ class Robot:
             self.track.append(self.pos)
 
 
-    def clean(self, home):
+    #def clean(self, home):
         #matrix = np.array(home.dirty)
         #print(matrix[1][2])
-        self.scan(home)
+        #self.scan(home)
+        #print(self.track)
         
         #for row in home.dirty:
             #print(row)
