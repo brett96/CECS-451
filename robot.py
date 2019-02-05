@@ -28,30 +28,23 @@ class Robot:
         # Start off in center of 3x3 and look around
         if movingRight:
             # Get values of surrounding area
-            up = home[self.pos[0]-1][self.pos[1]]
-            down = home[self.pos[0]+1][self.pos[1]]
-            right = home[self.pos[0]][self.pos[1] + 1]
-            left = home[self.pos[0]][self.pos[1]-1]
-            upLeft = home[self.pos[0]-1][self.pos[1]-1]
-            upRight = home[self.pos[0]-1][self.pos[1]+1]
-            downLeft = home[self.pos[0]+1][self.pos[1]-1]
-            downRight = home[self.pos[0]+1][self.pos[1]+1]
+            adjValues = self.scan(home)
 
             # Follow a cleaning pattern based on which areas are dirty and which are clean
-            if up == 1: 
-                if right == 1:
+            if adjValues["up"] == 1: 
+                if adjValues["right"] == 1:
                     self.up(home)
                     self.downLeft(home)
                     self.down(home)
                     self.right(home)
-                    if downRight == 1:
+                    if adjValues["downRight"] == 1:
                         self.right(home)
                         self.up(home)
                     else:
                         self.upRight(home)
-                    if upRight == 1:
+                    if adjValues["upRight"] == 1:
                         self.up(home)
-                elif upRight == 1:  # right = 0 
+                elif adjValues["upRight"] == 1:  # right = 0 
                     self.upRight(home)
                     self.left(home)
                     self.downLeft(home)
@@ -65,61 +58,62 @@ class Robot:
                     self.right(home)
                     self.right(home)
 
-            elif left == 1: # up = 0
+            elif adjValues["left"] == 1: # up = 0
                 self.left(home)
-                if downLeft == 1:
+                if adjValues["downLeft"] == 1:
+                    
                     self.down(home)
                     self.right(home)
                 else:   # up = 0, downLeft = 0, left = 1
                     self.downRight(home)
-                if downRight == 1:
+                if adjValues["downRight"] == 1:
                     self.right(home)
-                    if upRight == 1:
+                    if adjValues["upRight"] == 1:
                         self.up(home)
                         self.up(home)
-                    elif right == 1:
+                    elif adjValues["right"] == 1:
                         self.up(home)
                 else:   # downright = 0
                     self.upRight(home)
-                    if upRight == 1:
+                    if adjValues["upRight"] == 1:
                         self.up(home)
                 #if upRight == 1:
                  #   self.up(home)
-            elif downLeft == 1: # up = 0, left = 0
+            elif adjValues["downLeft"] == 1: # up = 0, left = 0
                 self.downLeft(home)
                 self.right(home)
-                if downRight == 1:
+                if adjValues["downRight"] == 1:
                     self.right(home)
-                    if upRight == 1:
+                    if adjValues["upRight"] == 1:
                         self.up(home)
                         self.up(home)
-                    elif right == 1:
+                    elif adjValues["right"] == 1:
                         self.up(home)
                 else:
                     self.upRight(home)
-                if upRight == 1:
+                if adjValues["upRight"] == 1:
                     self.up(home)
 
-            elif down == 1: # up = 0, left = 0, downLeft = 0
+            elif adjValues["down"] == 1: # up = 0, left = 0, downLeft = 0
                 self.down(home)
-                if downRight == 1:
+                if adjValues["downRight"] == 1:
                     self.right(home)
-                    if upRight == 1:
+                    if adjValues["upRight"] == 1:
                         self.up(home)
                         self.up(home)
-                    elif right == 1:
+                    elif adjValues["right"] == 1:
                         self.up(home)
                 else:
                     self.upRight(home)
-                    if upRight == 1:
+                    if adjValues["upRight"] == 1:
                         self.up(home)
 
             else:   # up = 0, left = 0, down = 0, downLeft = 0
                 self.downRight(home)
-                if upRight == 1:
+                if adjValues["upRight"] == 1:
                     self.up(home)
                     self.up(home)
-                elif right == 1:
+                elif adjValues["right"] == 1:
                     self.up(home)
 
             # Current box is clean
