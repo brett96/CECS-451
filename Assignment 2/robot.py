@@ -248,6 +248,7 @@ if __name__ == '__main__':
     agent = Robot()
     print(home)
     agent.clean(home)
+    print(agent.track)
     agent.show()
     print(home)
     #home.show()
