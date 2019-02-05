@@ -134,10 +134,22 @@ class Robot:
                 self.upRight(home)
 
         else:   # moving left
-            #TODO
+
             pass
 
         self.clean(home)
+        
+    def scan(self, home):
+        adjValues = {}
+        adjValues["up"] = home[self.pos[0]-1][self.pos[1]]
+        adjValues["down"] = home[self.pos[0]+1][self.pos[1]]
+        adjValues["right"] = home[self.pos[0]][self.pos[1] + 1]
+        adjValues["left"] = home[self.pos[0]][self.pos[1]-1]
+        adjValues["upLeft"] = home[self.pos[0]-1][self.pos[1]-1]
+        adjValues["upRight"] = home[self.pos[0]-1][self.pos[1]+1]
+        adjValues["downLeft"] = home[self.pos[0]+1][self.pos[1]-1]
+        adjValues["downRight"] = home[self.pos[0]+1][self.pos[1]+1] 
+        return adjValues
 
 
     def up(self, home):
