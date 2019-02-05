@@ -17,21 +17,44 @@ class Robot:
         if self.pos[0] > 15 or self.pos[1] > 15:    # Make sure robot is not in row or column 15 or higher
             return
 
-        if self.pos[0] % 3 == 0 and self.pos[1] % 3 == 0:   # Assert that robot starts off in a top right corner
-            if home[self.pos[0]][self.pos[1]] == 1:
-                self.setZero(home)
-            self.downRight(home)
-        else:
-            print("Robot should not be here: " + self.pos)
-            print(self.track)
+        #elif self.pos[0] % 3 == 0 and self.pos[1] % 3 == 0:   # Assert that robot starts off in a top right corner
+        if home[self.pos[0]][self.pos[1]] == 1:
+            self.setZero(home)
+        self.downRight(home)
+        #else:
+         #   print("Robot should not be here: " + self.pos)
+          #  print(self.track)
 
         # Start off in center of 3x3 and look around
         if movingRight:
-            # Get values of surrounding area
             adjValues = self.scan(home)
+            if self.pos[1] == 16:  # In rightmost 3x3 square
+                if adjValues["upRight"] == 1:
+                    self.upRight(home)
+                    self.left(home)
+                    self.downLeft(home)
+                elif adjValues["up"] == 1:
+                    self.up(home)
+                    self.downLeft(home)
+                else:
+                    self.left(home)
+        
+                # At left
+                if adjValues["downLeft"] == 1:
+                    self.down(home)
+                    self.right(home)
+                else:
+                    self.downRight(home)
+                # At down
+                if adjValues["right"] == 1:
+                    self.upRight(home)
+                    self.down(home)
+                else:
+                    self.right(home)
+
 
             # Follow a cleaning pattern based on which areas are dirty and which are clean
-            if adjValues["up"] == 1: 
+            elif adjValues["up"] == 1: 
                 if adjValues["right"] == 1:
                     self.up(home)
                     self.downLeft(home)
@@ -116,16 +139,19 @@ class Robot:
                 elif adjValues["right"] == 1:
                     self.up(home)
 
-            # Current box is clean
-            # Get to the top left corner of the next 3x3 box
-            current = self.pos[0]   # Get current row location
-            if current == 0:    # Already in correct row; move right
-                self.right(home)
-            elif current == 1:  # Need to go up and to the right
-                self.upRight(home)
-            else:               # Need to go up, then up and to the right
-                self.up(home)
-                self.upRight(home)
+            if self.pos[1] == 17:
+                self.down(home)
+            else:
+                # Current box is clean
+                # Get to the top left corner of the next 3x3 box
+                current = self.pos[0]   # Get current row location
+                if current == 0:    # Already in correct row; move right
+                    self.right(home)
+                elif current == 1:  # Need to go up and to the right
+                    self.upRight(home)
+                else:               # Need to go up, then up and to the right
+                    self.up(home)
+                    self.upRight(home)
 
         else:   # moving left
 
