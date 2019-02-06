@@ -6,27 +6,26 @@ class Robot:
     def __init__(self):
         self.pos = (0, 0)
         self.track = [self.pos]
+        self.movingRight = True
 
     def setZero(self, home):    # Set map value of self.pos to 0
         home[self.pos[0]][self.pos[1]] = 0
 
     def clean(self, home):
-
-        movingRight, movingLeft = True, False
-
-        if self.pos[0] > 15 or self.pos[1] > 15:    # Make sure robot is not in row or column 15 or higher
+        if self.pos[0] > 17 or self.pos[1] > 17:    # Make sure robot is not in row or column 15 or higher
             return
 
         #elif self.pos[0] % 3 == 0 and self.pos[1] % 3 == 0:   # Assert that robot starts off in a top right corner
         if home[self.pos[0]][self.pos[1]] == 1:
             self.setZero(home)
-        self.downRight(home)
+        if self.movingRight:
+            self.downRight(home)
         #else:
          #   print("Robot should not be here: " + self.pos)
           #  print(self.track)
 
         # Start off in center of 3x3 and look around
-        if movingRight:
+        if self.movingRight:
             adjValues = self.scan(home)
             if self.pos[1] == 16:  # In rightmost 3x3 square
                 if adjValues["upRight"] == 1:
@@ -141,6 +140,7 @@ class Robot:
 
             if self.pos[1] == 17:
                 self.down(home)
+                self.movingRight = False
             else:
                 # Current box is clean
                 # Get to the top left corner of the next 3x3 box
@@ -154,8 +154,35 @@ class Robot:
                     self.upRight(home)
 
         else:   # moving left
-
-            pass
+            if self.pos[1] == 2:
+                return
+            self.downLeft(home) # Go to center
+            adjValues = self.scan(home)
+            if adjValues["right"] == 1:
+                self.right(home)
+                if adjValues["downRight"] == 1:
+                    self.down(home)
+                    self.left(home)
+                else:
+                    self.downLeft(home)
+            elif adjValues["downRight"] == 1:
+                self.downRight(home)
+                self.left(home)
+            elif adjValues["down"] == 1:
+                self.down(home)
+            # At down
+            if adjValues["downLeft"] == 1:
+                self.left(home)
+                self.up(home)
+            else:
+                self.upLeft(home)
+            # At left
+            if adjValues["up"] == 1:
+                self.upRight(home)
+                self.left(home)
+            elif adjValues["upLeft"] == 1:
+                self.up(home)
+            self.left(home)
 
         self.clean(home)
         
