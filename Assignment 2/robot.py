@@ -11,6 +11,12 @@ class Robot:
     def setZero(self, home):    # Set map value of self.pos to 0
         home[self.pos[0]][self.pos[1]] = 0
 
+    def finish(self, home):
+        for i in range(0, len(home[1])):
+            self.right(home)
+        for j in range(0, len(home[0])):
+            self.up(home)
+
     def clean(self, home):
         if self.pos[0] > 17 or self.pos[1] > 17:    # Make sure robot is not in row or column 15 or higher
             return
@@ -311,6 +317,7 @@ if __name__ == '__main__':
     agent = Robot()
     print(home)
     agent.clean(home)
+    agent.finish(home)
     print(agent.track)
     agent.show()
     print(home)
