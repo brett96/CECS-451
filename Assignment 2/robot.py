@@ -168,7 +168,7 @@ class Robot:
             elif adjValues["downRight"] == 1:
                 self.downRight(home)
                 self.left(home)
-            elif adjValues["down"] == 1:
+            else:
                 self.down(home)
             # At down
             if adjValues["downLeft"] == 1:
@@ -180,9 +180,12 @@ class Robot:
             if adjValues["up"] == 1:
                 self.upRight(home)
                 self.left(home)
+                self.left(home)
             elif adjValues["upLeft"] == 1:
                 self.up(home)
-            self.left(home)
+                self.left(home)
+            else:
+                self.upLeft(home)
 
         self.clean(home)
         
