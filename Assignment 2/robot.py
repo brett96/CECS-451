@@ -144,7 +144,7 @@ class Robot:
             else:
                 # Current box is clean
                 # Get to the top left corner of the next 3x3 box
-                current = self.pos[0]   # Get current row location
+                current = self.pos[0] % 3  # Get current row location
                 if current == 0:    # Already in correct row; move right
                     self.right(home)
                 elif current == 1:  # Need to go up and to the right
@@ -158,12 +158,13 @@ class Robot:
             if self.pos[0] > 17:
                 return
             adjValues = self.scan(home)
-            if self.pos[1] == 1:
+            if self.pos[1] <= 1:
                 if adjValues["down"] == 1:
                     self.down(home)
                     if adjValues["downRight"] == 1:
                         self.right(home)
                         self.up(home)
+                        self.upLeft(home)
                     else:
                         self.upRight(home)
                         self.upLeft(home)
