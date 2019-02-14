@@ -4,14 +4,23 @@ import numpy as np
 
 class nQueens:
     def __init__(self, *args, **kwargs):
-        numQueens = int(sys.argv[1])
-        board = [[0 for i in range(numQueens)] for j in range(numQueens)]
-        for i in range(0, int(numQueens)):
-            xLoc = random.randint(0, numQueens - 1)
-            yLoc = random.randint(0, numQueens - 1)
-            board[xLoc][yLoc] = "q"
-        print(np.array(board))
+        self.numQueens = int(sys.argv[1])
+        self.board = [["-" for i in range(self.numQueens)] for j in range(self.numQueens)]
+        locations = []
+        for i in range(0, int(self.numQueens)):
+            done = False
+            while not done:
+                xLoc = random.randint(0, len(self.board)-1)
+                yLoc = random.randint(0, len(self.board)-1)
+                if (xLoc, yLoc) not in locations:
+                    locations.append((xLoc, yLoc))
+                    done = True
+                    self.board[xLoc][yLoc] = "q"
 
+        print(np.array(self.board))
+
+    def solve(self, board):
+        pass
 
 if __name__ == "__main__":
     agent = nQueens()
