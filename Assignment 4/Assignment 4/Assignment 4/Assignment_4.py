@@ -53,35 +53,46 @@ class nQueens:
         for i in range(0, int(sys.argv[2])):
             agent = nQueens()
             #agents.append(agent)
-            agents[i+1] = agent
+            agents[i+1] = agent # Add agent to agent dictionary
             agent.show()
             #print("Attacks: " + str(agent.checkAttacks()))
             attackingPairs = agent.checkAttacks()
             fitness = agent.calculateFitness(attackingPairs)
-            fitnesses[i+1] = fitness
+            print("Fitness = ", str(fitness))
+            fitnesses[i+1] = fitness    # Add corresponding agent's fitness to fitness dictionary (same keys)
             print("Genetic List = " + str(agent.getGeneticList()))
         totalStateSum = sum(fitnesses)
-        for f in fitnesses:
-            print("Fitness = " + str(fitnesses[f]/totalStateSum))
+        #for f in fitnesses: # Print each agent's fitness
+        #    print("Fitness = " + str(fitnesses[f]/totalStateSum))
         fitLength = len(fitnesses)
-        for i in range(0, fitLength // 2):
-            fitnesses.pop(min(fitnesses))
+        for i in range(0, fitLength // 2):  # Delete the bottom half fitnesses
+            low = min(fitnesses.values())
+            for f in fitnesses:
+                if fitnesses[f] == low:
+                    fitnesses.pop(f)
+                    break
         
-        parent1 = max(fitnesses.values())
-        result = agents[1].getGeneticList()
-        for i in range(len(fitnesses.items())):
-            if fitnesses.get(i+1) == parent1:
-                result = agents[i+1].getGeneticList()
-                print(result)
-                fitnesses.pop(i+1)
+        # Get parent 1 genetic list
+        parent1Val = max(fitnesses.values())
+        parent1 = None
+        for f in fitnesses:
+            if fitnesses[f] == parent1Val:
+                parent1 = agents[f]
+                fitnesses.pop(f)
+                break
+        print("Parent 1 List = " , parent1.getGeneticList())
 
-        print(result)
-        parent2 = max(fitnesses.values())
-        for i in range(len(fitnesses.items())):
-            if fitnesses.get(i+1) == parent1:
-                result = agents[i+1].getGeneticList()
-                fitnesses.pop(i+1)
-        print(result)
+        # Get parent 2 genetic list
+        parent2Val = max(fitnesses.values())
+        parent2 = None
+        for f in fitnesses:
+            if fitnesses[f] == parent2Val:
+                parent2 = agents[f]
+                fitnesses.pop(f)
+                break
+        print("Parent 2 list = ", parent2.getGeneticList())
+
+
         #fitnesses.pop(parent1)
         #parent2 = max(fitnesses.values())
 
