@@ -37,6 +37,10 @@ class nQueens:
 
         print()
 
+    def generateStates(self):
+        for i in range(0, int(sys.argv[2])):
+            agent = nQueens()
+            print(agent.checkAttacks())
 
     def solve(self, board):
         pass
@@ -89,11 +93,5 @@ class nQueens:
 if __name__ == "__main__":
     # 4 states
     agent1 = nQueens()
-    print(agent1.checkAttacks())
-    agent2 = nQueens()
-    print(agent2.checkAttacks())
-    agent3 = nQueens()
-    print(agent3.checkAttacks())
-    agent4 = nQueens()
-    print(agent4.checkAttacks())
+    agent1.generateStates()
 
