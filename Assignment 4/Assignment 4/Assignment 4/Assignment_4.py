@@ -22,7 +22,7 @@ class nQueens:
                 #    done = True
                 #    self.board[xLoc][yLoc] = "q"
 
-        print(np.array(self.board))
+        #print(np.array(self.board))
         geneticList = []
         for x in range(0, self.numQueens):
             y = 0
@@ -32,15 +32,19 @@ class nQueens:
                     geneticList.append(y)
                     done = True
                 y += 1
-        print(geneticList)
+        #print(geneticList)
 
 
-        print()
+        #print()
 
     def generateStates(self):
         for i in range(0, int(sys.argv[2])):
             agent = nQueens()
+            agent.show()
             print(agent.checkAttacks())
+
+    def show(self):
+        print(np.array(self.board))
 
     def solve(self, board):
         pass
