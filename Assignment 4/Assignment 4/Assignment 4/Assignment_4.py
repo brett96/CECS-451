@@ -54,101 +54,110 @@ class nQueens:
         for i in range(0, self.k):
             agent = nQueens()
             #agents.append(agent)
-            agents[i+1] = agent # Add agent to agent dictionary
+            agents[i] = agent # Add agent to agent dictionary
             agent.show()
             #print("Attacks: " + str(agent.checkAttacks()))
             attackingPairs = agent.checkAttacks()
             fitness = agent.calculateFitness(attackingPairs)
             print(fitness)
             print("Fitness = ", str(fitness))
-            fitnesses[i+1] = fitness    # Add corresponding agent's fitness to fitness dictionary (same keys)
+            fitnesses[i] = fitness    # Add corresponding agent's fitness to fitness dictionary (same keys)
             print("Genetic List = " + str(agent.getGeneticList()))
         totalStateSum = sum(fitnesses.values())
         print(totalStateSum)
         for i in range(0, self.k):
-            fitnesses[i+1] = fitnesses[i+1] / totalStateSum
+            fitnesses[i] = fitnesses[i] / totalStateSum
         
 
+        # Get sorted list of fitness values
+        while len(fitnesses) > 0:
+            f = sorted(fitnesses.values())
             
-        f = sorted(fitnesses.values())
-        for i in range(len(fitnesses)):
-            print(fitnesses[i])
-            
-        r = random.random()
-        choice = None
-        for i in f:
-            if i < r:
-                choice = i
+            r = random.random() # Generate a random number to determine if mutation
+            choice = None
+            for i in f:
+                if i < r:   # If fitness of current parent is less than generated probability:
+                    choice = i  # Choose that parent (choice = parent's fitness)
+                    break
+        
+            parent1 = agents[list(agents.keys())[0]]
+            parent2 = agents[list(agents.keys())[0]]
+        
+            for f in fitnesses:
+                if fitnesses[f] == choice:  # If fitness == saved fitness:
+                    parent1 = agents[f]         # Use that as parent
+                    fitnesses.pop(f)            # Remove fitness from dictionary to choose 2nd parent
+                    break
+        
+            possibleParents = []
+            keys = fitnesses.keys()
+            for key in keys:
+                possibleParents.append(key)
+            if len(possibleParents) == 0:
                 break
-        
-        parent1 = None
-        parent2 = None
-        
-        for f in fitnesses:
-            if fitnesses[f] == choice:
-                parent1 = agents[f]
-                fitnesses.pop(fitnesses[f])
-                break
-        
-        parent2 = agents[random(fitnesses.keys)]
+            print(possibleParents)
+            p2Key = random.choice(possibleParents)
+            parent2 = agents[p2Key]
+            fitnesses.pop(p2Key)
+
                 
         
     
         
         
-        #for f in fitnesses: # Print each agent's fitness
-        #    print("Fitness = " + str(fitnesses[f]/totalStateSum))
+            #for f in fitnesses: # Print each agent's fitness
+            #    print("Fitness = " + str(fitnesses[f]/totalStateSum))
        
     
-        # Get parent 1 genetic list
-        parent1Val = max(fitnesses.values())
-        parent1 = None
-        for f in fitnesses:
-            if fitnesses[f] == parent1Val:
-                parent1 = agents[f]
-                fitnesses.pop(f)
-                break
-        print("Parent 1 List = " , parent1.getGeneticList())
+            # Get parent 1 genetic list
+            #parent1Val = max(fitnesses.values())
+            #parent1 = None
+            #for f in fitnesses:
+            #    if fitnesses[f] == parent1Val:
+            #        parent1 = agents[f]
+            #        fitnesses.pop(f)
+            #        break
+            print("Parent 1 List = " , parent1.getGeneticList())
 
-        # Get parent 2 genetic list
-        parent2Val = max(fitnesses.values())
-        parent2 = None
-        for f in fitnesses:
-            if fitnesses[f] == parent2Val:
-                parent2 = agents[f]
-                fitnesses.pop(f)
-                break
-        print("Parent 2 list = ", parent2.getGeneticList())
+            # Get parent 2 genetic list
+            #parent2Val = max(fitnesses.values())
+            #parent2 = None
+            #for f in fitnesses:
+            #    if fitnesses[f] == parent2Val:
+            #        parent2 = agents[f]
+            #        fitnesses.pop(f)
+            #        break
+            print("Parent 2 list = ", parent2.getGeneticList())
 
 
-        crossoverInt = random.randint(1, self.numQueens - 1)
+            crossoverInt = random.randint(1, self.numQueens - 1)
         
-        parent1List = parent1.getGeneticList()
-        parent2List = parent2.getGeneticList()
+            parent1List = parent1.getGeneticList()
+            parent2List = parent2.getGeneticList()
         
-        p1a = parent1List[0:crossoverInt]
-        p1b = parent1List[crossoverInt:]
+            p1a = parent1List[0:crossoverInt]
+            p1b = parent1List[crossoverInt:]
         
-        p2a = parent2List[0:crossoverInt]
-        p2b = parent2List[crossoverInt:]
+            p2a = parent2List[0:crossoverInt]
+            p2b = parent2List[crossoverInt:]
         
-        child1 = p1a + p2b
-        child2 = p2a + p1b
+            child1 = p1a + p2b
+            child2 = p2a + p1b
         
-        print("Crossover index = ", crossoverInt)
-        print("child 1 = ", child1)
-        print("child 2 = ", child2)
+            print("Crossover index = ", crossoverInt)
+            print("child 1 = ", child1)
+            print("child 2 = ", child2)
         
-        mutationProb1 = random.random()
-        mutationProb2 = random.random()
+            mutationProb1 = random.random()
+            mutationProb2 = random.random()
         
-        if(mutationProb1 < 0.05):
-            child1 = self.mutation(child1)
-        if(mutationProb2 < 0.05):
-            child2 = self.mutation(child2)
+            if(mutationProb1 < 0.05):
+                child1 = self.mutation(child1)
+            if(mutationProb2 < 0.05):
+                child2 = self.mutation(child2)
 
-        print("new child 1 = ", child1)
-        print("new child 2 = ", child2)
+            print("new child 1 = ", child1)
+            print("new child 2 = ", child2)
     
     def getChildCoordinates(self, paren):
         pass
