@@ -50,7 +50,8 @@ class nQueens:
         #agents = [] # List containing all states (aka boards)
         agents = {} # Dictionary assigning each agent an int value
         fitnesses = {}  # Dictionary assigning each agent's int to its fitness
-        for i in range(0, int(sys.argv[2])):
+        
+        for i in range(0, self.k):
             agent = nQueens()
             #agents.append(agent)
             agents[i+1] = agent # Add agent to agent dictionary
@@ -58,10 +59,43 @@ class nQueens:
             #print("Attacks: " + str(agent.checkAttacks()))
             attackingPairs = agent.checkAttacks()
             fitness = agent.calculateFitness(attackingPairs)
+            print(fitness)
             print("Fitness = ", str(fitness))
             fitnesses[i+1] = fitness    # Add corresponding agent's fitness to fitness dictionary (same keys)
             print("Genetic List = " + str(agent.getGeneticList()))
-        totalStateSum = sum(fitnesses)
+        totalStateSum = sum(fitnesses.values())
+        print(totalStateSum)
+        for i in range(0, self.k):
+            fitnesses[i+1] = fitnesses[i+1] / totalStateSum
+        
+
+            
+        f = sorted(fitnesses.values())
+        for i in range(len(fitnesses)):
+            print(fitnesses[i])
+            
+        r = random.random()
+        choice = None
+        for i in f:
+            if i < r:
+                choice = i
+                break
+        
+        parent1 = None
+        parent2 = None
+        
+        for f in fitnesses:
+            if fitnesses[f] == choice:
+                parent1 = agents[f]
+                fitnesses.pop(fitnesses[f])
+                break
+        
+        parent2 = agents[random(fitnesses.keys)]
+                
+        
+    
+        
+        
         #for f in fitnesses: # Print each agent's fitness
         #    print("Fitness = " + str(fitnesses[f]/totalStateSum))
        
