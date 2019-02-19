@@ -37,17 +37,30 @@ class nQueens:
 
         #print()
 
-    def generateStates(self):
+    def generateStates(self):   # Genrate 'k' states
+        agents = [] # List containing all states (aka boards)
         for i in range(0, int(sys.argv[2])):
             agent = nQueens()
+            agents.append(agent)
             agent.show()
             print(agent.checkAttacks())
+            print("Genetic List = " + str(agent.getGeneticList()))
 
-    def show(self):
+    def show(self): # Print out board & queens
         print(np.array(self.board))
+        #print()
 
-    def solve(self, board):
-        pass
+    def getGeneticList(self):
+        geneticList = []
+        for x in range(0, self.numQueens):
+            y = 0
+            done = False
+            while not done:
+                if self.board[x][y] == 'q':
+                    geneticList.append(y)
+                    done = True
+                y += 1
+        return geneticList
 
     def selection(self, board):
         pass
@@ -58,40 +71,38 @@ class nQueens:
     def mutation(self, board):
         pass
 
-    def checkAttacks(self):
-        queenXLocs = []
-        queenYLocs = []
-        conflicts = []
+    def checkAttacks(self): # Get attacking pairs
+        conflicts = []  # List containing tuples of attacking pairs
         for queen in self.locations:
             init = (queen[0], queen[1]) # Save initial location of queen 
-            xPos = queen[0]
-            yPos = queen[1]
-            if (xPos in queenXLocs or yPos in queenYLocs) and queen not in conflicts:
-                conflicts.append(queen)
-            queenXLocs.append(xPos)
-            queenYLocs.append(yPos)
+
             while queen[0] > 0:  #Check up, left
                 queen = (queen[0] - 1, queen[1] - 1)
-                if (queen in self.locations) and queen not in conflicts:
-                    conflicts.append(queen)
-            queen = init
+                if (queen in self.locations) and (queen, init) not in conflicts:
+                    conflicts.append((queen, init))
+            queen = init    # Return queen to initial state
             while queen[0] > 0: # Check up, right
                 queen = (queen[0] - 1, queen[1]+1)
-                if (queen in self.locations) and queen not in conflicts:
-                    conflicts.append(queen)
+                if (queen in self.locations) and (queen, init) not in conflicts:
+                    conflicts.append((queen, init))
             queen = init
-            while queen[0] < self.numQueens:
+            while queen[0] < self.numQueens:    # Check down, right
                 queen  = (queen[0] + 1, queen[1] + 1)
-                if (queen in self.locations) and queen not in conflicts:
-                    conflicts.append(queen)
+                if (queen in self.locations) and (queen, init) not in conflicts:
+                    conflicts.append((queen, init))
             queen = init    # Restore queen to initial location
-            while queen[0] < self.numQueens:
+            while queen[0] < self.numQueens:    # Check down, left
                 queen  = (queen[0] + 1, queen[1] - 1)
-                if (queen in self.locations) and queen not in conflicts:
-                    conflicts.append(queen)
+                if (queen in self.locations) and (queen, init) not in conflicts:
+                    conflicts.append((queen, init))
             queen = init    # Restore queen to initial location
             
-        return "Attacking pairs = " + str(conflicts)
+        #return "Attacking pairs = " + str(conflicts)
+        print("Conflicts:\n")
+        for conflict in conflicts:
+            print(str(conflict) + "\n")
+        print("Number of attacking pairs = " + str(len(conflicts)/2))
+
 
 
 if __name__ == "__main__":
