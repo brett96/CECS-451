@@ -64,14 +64,8 @@ class nQueens:
         totalStateSum = sum(fitnesses)
         #for f in fitnesses: # Print each agent's fitness
         #    print("Fitness = " + str(fitnesses[f]/totalStateSum))
-        fitLength = len(fitnesses)
-        for i in range(0, fitLength // 2):  # Delete the bottom half fitnesses
-            low = min(fitnesses.values())
-            for f in fitnesses:
-                if fitnesses[f] == low:
-                    fitnesses.pop(f)
-                    break
-        
+       
+    
         # Get parent 1 genetic list
         parent1Val = max(fitnesses.values())
         parent1 = None
@@ -93,14 +87,41 @@ class nQueens:
         print("Parent 2 list = ", parent2.getGeneticList())
 
 
-        #fitnesses.pop(parent1)
-        #parent2 = max(fitnesses.values())
+        crossoverInt = random.randint(1, self.numQueens - 1)
+        
+        parent1List = parent1.getGeneticList()
+        parent2List = parent2.getGeneticList()
+        
+        p1a = parent1List[0:crossoverInt]
+        p1b = parent1List[crossoverInt:]
+        
+        p2a = parent2List[0:crossoverInt]
+        p2b = parent2List[crossoverInt:]
+        
+        child1 = p1a + p2b
+        child2 = p2a + p1b
+        
+        print("Crossover index = ", crossoverInt)
+        print("child 1 = ", child1)
+        print("child 2 = ", child2)
+        
+        mutationProb1 = random.random()
+        mutationProb2 = random.random()
+        
+        if(mutationProb1 < 0.05):
+            child1 = self.mutation(child1)
+        if(mutationProb2 < 0.05):
+            child2 = self.mutation(child2)
 
-
-
-
+        print("new child 1 = ", child1)
+        print("new child 2 = ", child2)
+    
+    def getChildCoordinates(self, paren):
+        pass
+        
     def show(self): # Print out board & queens
         print(np.array(self.board))
+        pass
         #print()
 
     def getGeneticList(self):
@@ -121,8 +142,14 @@ class nQueens:
     def crossover(self, board):
         pass
 
-    def mutation(self, board):
-        pass
+    def mutation(self, child):
+       index = random.randint(0, len(child) - 1)
+       newVal = random.randint(0, len(child) - 1)
+       
+       child[index] = newVal
+       
+       return child
+       
 
     def calculateFitness(self, attackingPairs):
         f = math.factorial
