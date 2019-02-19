@@ -1,10 +1,12 @@
 import sys
 import random
 import numpy as np
+import math
 
 class nQueens:
     def __init__(self, *args, **kwargs):
         self.numQueens = int(sys.argv[1])
+        self.k = int(sys.argv[2])
         self.board = [['-' for i in range(self.numQueens)] for j in range(self.numQueens)]  # Generate empty board
         self.locations = []  # Keep track of location of queens
         self.xVals, self.yVals = [i for i in range(0, self.numQueens)], [i for i in range(0, self.numQueens)]   # Generate 2 lists for all possible x and y values
@@ -36,15 +38,55 @@ class nQueens:
 
 
         #print()
+ 
+
+    def generatePopulationList(self):
+        populationList = []
+        for i in range(int(sys.argv[2])):
+            populationList.append([x[0] for x in self.locations] )
+        return populationList
 
     def generateStates(self):   # Genrate 'k' states
-        agents = [] # List containing all states (aka boards)
+        #agents = [] # List containing all states (aka boards)
+        agents = {} # Dictionary assigning each agent an int value
+        fitnesses = {}  # Dictionary assigning each agent's int to its fitness
         for i in range(0, int(sys.argv[2])):
             agent = nQueens()
-            agents.append(agent)
+            #agents.append(agent)
+            agents[i+1] = agent
             agent.show()
-            print(agent.checkAttacks())
+            #print("Attacks: " + str(agent.checkAttacks()))
+            attackingPairs = agent.checkAttacks()
+            fitness = agent.calculateFitness(attackingPairs)
+            fitnesses[i+1] = fitness
             print("Genetic List = " + str(agent.getGeneticList()))
+        totalStateSum = sum(fitnesses)
+        for f in fitnesses:
+            print("Fitness = " + str(fitnesses[f]/totalStateSum))
+        fitLength = len(fitnesses)
+        for i in range(0, fitLength // 2):
+            fitnesses.pop(min(fitnesses))
+        
+        parent1 = max(fitnesses.values())
+        result = agents[1].getGeneticList()
+        for i in range(len(fitnesses.items())):
+            if fitnesses.get(i+1) == parent1:
+                result = agents[i+1].getGeneticList()
+                print(result)
+                fitnesses.pop(i+1)
+
+        print(result)
+        parent2 = max(fitnesses.values())
+        for i in range(len(fitnesses.items())):
+            if fitnesses.get(i+1) == parent1:
+                result = agents[i+1].getGeneticList()
+                fitnesses.pop(i+1)
+        print(result)
+        #fitnesses.pop(parent1)
+        #parent2 = max(fitnesses.values())
+
+
+
 
     def show(self): # Print out board & queens
         print(np.array(self.board))
@@ -70,6 +112,10 @@ class nQueens:
 
     def mutation(self, board):
         pass
+
+    def calculateFitness(self, attackingPairs):
+        f = math.factorial
+        return ((f(self.numQueens) / f(2) / f(self.numQueens - 2)) - attackingPairs)
 
     def checkAttacks(self): # Get attacking pairs
         conflicts = []  # List containing tuples of attacking pairs
@@ -98,10 +144,10 @@ class nQueens:
             queen = init    # Restore queen to initial location
             
         #return "Attacking pairs = " + str(conflicts)
-        print("Conflicts:\n")
-        for conflict in conflicts:
-            print(str(conflict) + "\n")
-        print("Number of attacking pairs = " + str(len(conflicts)/2))
+        #print("Conflicts:\n")
+        #for conflict in conflicts:
+        #    print(str(conflict) + "\n")
+        return len(conflicts) / 2
 
 
 
