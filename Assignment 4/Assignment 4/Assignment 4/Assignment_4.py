@@ -53,22 +53,37 @@ class nQueens:
     def checkAttacks(self):
         queenXLocs = []
         queenYLocs = []
+        conflicts = []
         for queen in self.locations:
+            init = (queen[0], queen[1]) # Save initial location of queen 
             xPos = queen[0]
             yPos = queen[1]
-            if xPos in queenXLocs or yPos in queenYLocs:
-                return False
+            if (xPos in queenXLocs or yPos in queenYLocs) and queen not in conflicts:
+                conflicts.append(queen)
             queenXLocs.append(xPos)
             queenYLocs.append(yPos)
-            while queen[0] > 0:  #Check up
+            while queen[0] > 0:  #Check up, left
                 queen = (queen[0] - 1, queen[1] - 1)
-                if queen in self.locations:
-                    return False
-            while queen[1] < self.numQueens:
+                if (queen in self.locations) and queen not in conflicts:
+                    conflicts.append(queen)
+            queen = init
+            while queen[0] > 0: # Check up, right
+                queen = (queen[0] - 1, queen[1]+1)
+                if (queen in self.locations) and queen not in conflicts:
+                    conflicts.append(queen)
+            queen = init
+            while queen[0] < self.numQueens:
                 queen  = (queen[0] + 1, queen[1] + 1)
-                if queen in self.locations:
-                    return False
-        return True
+                if (queen in self.locations) and queen not in conflicts:
+                    conflicts.append(queen)
+            queen = init    # Restore queen to initial location
+            while queen[0] < self.numQueens:
+                queen  = (queen[0] + 1, queen[1] - 1)
+                if (queen in self.locations) and queen not in conflicts:
+                    conflicts.append(queen)
+            queen = init    # Restore queen to initial location
+            
+        return "Attacking pairs = " + str(conflicts)
 
 
 if __name__ == "__main__":
