@@ -70,11 +70,20 @@ class nQueens:
         
 
         # Get sorted list of fitness values
-        while len(fitnesses) > 0:
+        while len(fitnesses) >= 0:
+            print(fitnesses)
+            if len(fitnesses) == 1:
+                print("Single Parent:")
+                parent = agents[list(fitnesses.keys())[0]]
+                print(parent.getGeneticList())
+                break
             f = sorted(fitnesses.values())
             
             r = random.random() # Generate a random number to determine if mutation
-            choice = None
+            print(f)
+            if len(f) == 0:
+                break
+            choice = f[0]
             for i in f:
                 if i < r:   # If fitness of current parent is less than generated probability:
                     choice = i  # Choose that parent (choice = parent's fitness)
@@ -83,7 +92,7 @@ class nQueens:
             parent1 = agents[list(agents.keys())[0]]
             parent2 = agents[list(agents.keys())[0]]
         
-            for f in fitnesses:
+            for f in fitnesses.keys():
                 if fitnesses[f] == choice:  # If fitness == saved fitness:
                     parent1 = agents[f]         # Use that as parent
                     fitnesses.pop(f)            # Remove fitness from dictionary to choose 2nd parent
