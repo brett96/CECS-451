@@ -22,7 +22,7 @@ class nQueens:
         global n
         locationList = np.arange(n)
         np.random.shuffle(locationList)
-        return locationList
+        return list(locationList)
 
     def makePopulationList(self):
         global k
@@ -32,7 +32,7 @@ class nQueens:
             self.fitnesses[i] = self.calculateFitness(self.boards[i])
 
     def calculateFitness(self, list):
-        print("list = ", list)
+        #print("list = ", list)
         length = len(list)
         conflicts = 0
         uniqueLength = len(np.unique(list))
@@ -56,12 +56,15 @@ class nQueens:
 
     def isSolved(self):
         globals()
-        if self.boards == None:
-            return True
+        #if self.boards == None:
+        #    return True
         f = math.factorial
         max = f(n) / f(2) / f(n - 2)
-        print("Boards = ", self.boards)
+        #print("Boards = ", self.boards)
         fVals = [self.calculateFitness(l) for l in self.boards.values()]
+        print("max = ", max)
+        print("fVals = ", fVals)
+        # fVals filled w/ 'max' in each index after 1st call of isSolved?
         if max in fVals:
             return True
         return False
