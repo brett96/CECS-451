@@ -19,10 +19,6 @@ class nQueens:
             self.board[xLoc][yLoc] = "q"        # Add a queen at the coordinates
             self.xVals.remove(xLoc)             # Remove chosen xLoc from xVals so no other queen appears in the row
             self.yVals.remove(yLoc)             # Remove chosen yLoc from yVals so no other queen appears in the column
-                #if (xLoc, yLoc) not in locations:
-                #    locations.append((xLoc, yLoc))
-                #    done = True
-                #    self.board[xLoc][yLoc] = "q"
 
         #print(np.array(self.board))
         geneticList = []
@@ -34,10 +30,6 @@ class nQueens:
                     geneticList.append(y)
                     done = True
                 y += 1
-        #print(geneticList)
-
-
-        #print()
  
 
     def generatePopulationList(self):
@@ -46,18 +38,20 @@ class nQueens:
             populationList.append([x[0] for x in self.locations] )
         return populationList
 
+
+
     def generateStates(self):   # Genrate 'k' states
-        #agents = [] # List containing all states (aka boards)
         agents = {} # Dictionary assigning each agent an int value
         fitnesses = {}  # Dictionary assigning each agent's int to its fitness
         
         for i in range(0, self.k):
             agent = nQueens()
-            #agents.append(agent)
+
             agents[i] = agent # Add agent to agent dictionary
             agent.show()
-            #print("Attacks: " + str(agent.checkAttacks()))
-            attackingPairs = agent.checkAttacks()
+
+            # Calculate fitness by finding number of non-attacking pairs
+            attackingPairs = agent.checkAttacks()   
             fitness = agent.calculateFitness(attackingPairs)
             print(fitness)
             print("Fitness = ", str(fitness))
@@ -65,27 +59,30 @@ class nQueens:
             print("Genetic List = " + str(agent.getGeneticList()))
         totalStateSum = sum(fitnesses.values())
         print(totalStateSum)
+
+        # Convert fitnesses values to percentages
         for i in range(0, self.k):
             fitnesses[i] = fitnesses[i] / totalStateSum
         
 
-        # Get sorted list of fitness values
+        parents = {}
+        pcIdx = 0 #Parent/Child dictionary index (key value)
+        children = {}
         while len(fitnesses) >= 0:
-            print(fitnesses)
             if len(fitnesses) == 1:
                 print("Single Parent:")
                 parent = agents[list(fitnesses.keys())[0]]
-                print(parent.getGeneticList())
+                print("Parent = ", parent.getGeneticList())
+                print("Child = ", parent.getGeneticList()) # If only 1 parent, make child a clone of the parent
                 break
-            f = sorted(fitnesses.values())
+            f = sorted(fitnesses.values())  # Get sorted list of fitness values
             
             r = random.random() # Generate a random number to determine if mutation
-            print(f)
-            if len(f) == 0:
+            if len(f) == 0: # Stop if list is empty (already made all parents & children
                 break
-            choice = f[0]
+            choice = f[len(f)-1]
             for i in f:
-                if i < r:   # If fitness of current parent is less than generated probability:
+                if i > r:   # If fitness of current parent is greater than generated probability:
                     choice = i  # Choose that parent (choice = parent's fitness)
                     break
         
@@ -104,38 +101,11 @@ class nQueens:
                 possibleParents.append(key)
             if len(possibleParents) == 0:
                 break
-            print(possibleParents)
             p2Key = random.choice(possibleParents)
             parent2 = agents[p2Key]
             fitnesses.pop(p2Key)
 
-                
-        
-    
-        
-        
-            #for f in fitnesses: # Print each agent's fitness
-            #    print("Fitness = " + str(fitnesses[f]/totalStateSum))
-       
-    
-            # Get parent 1 genetic list
-            #parent1Val = max(fitnesses.values())
-            #parent1 = None
-            #for f in fitnesses:
-            #    if fitnesses[f] == parent1Val:
-            #        parent1 = agents[f]
-            #        fitnesses.pop(f)
-            #        break
             print("Parent 1 List = " , parent1.getGeneticList())
-
-            # Get parent 2 genetic list
-            #parent2Val = max(fitnesses.values())
-            #parent2 = None
-            #for f in fitnesses:
-            #    if fitnesses[f] == parent2Val:
-            #        parent2 = agents[f]
-            #        fitnesses.pop(f)
-            #        break
             print("Parent 2 list = ", parent2.getGeneticList())
 
 
@@ -155,7 +125,14 @@ class nQueens:
         
             print("Crossover index = ", crossoverInt)
             print("child 1 = ", child1)
+            parents[pcIdx] = parent1.getGeneticList()   # Add parents & children to respective dictionaries
+            children[pcIdx] = child1
+            pcIdx += 1
             print("child 2 = ", child2)
+            parents[pcIdx] = parent2.getGeneticList()
+            children[pcIdx] = child2
+            pcIdx += 1
+
         
             mutationProb1 = random.random()
             mutationProb2 = random.random()
@@ -168,7 +145,9 @@ class nQueens:
             print("new child 1 = ", child1)
             print("new child 2 = ", child2)
     
-    def getChildCoordinates(self, paren):
+
+
+    def getChildCoordinates(self, parent):
         pass
         
     def show(self): # Print out board & queens
@@ -233,10 +212,6 @@ class nQueens:
                     conflicts.append((queen, init))
             queen = init    # Restore queen to initial location
             
-        #return "Attacking pairs = " + str(conflicts)
-        #print("Conflicts:\n")
-        #for conflict in conflicts:
-        #    print(str(conflict) + "\n")
         return len(conflicts) / 2
 
 
