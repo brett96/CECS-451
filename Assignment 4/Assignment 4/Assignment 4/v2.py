@@ -74,8 +74,9 @@ class nQueens:
         globals()
         self.p1, self.p2 = None, None
         total = np.sum([self.calculateFitness(l) for l in self.boards.values()])
-        for b in self.boards:
-            self.probabilities[b] = self.fitnesses[b] / (total*1.0)
+        print("fitnesses = ", self.fitnesses)
+        for i in range(len(self.boards)):
+            self.probabilities[i] = self.fitnesses[i] / (total*1.0)
         while True and len(self.boards) > 0:
             p1Rand = np.random.rand()
             p1RN = [x for x in self.boards if self.probabilities[x] <= p1Rand]
@@ -107,29 +108,40 @@ class nQueens:
 
 
     def crossover(self):
-        s = str(self.p1)
-        if s.isnumeric():
-            return []
+        s = self.boards[self.p1]
+        print("s = ", s)
+        #if s.isnumeric():
+        #    return []
         globals()
         crossoverIndex = random.randint(1, k - 1)
         child = []
         print(self.p1)
-        child.extend(self.p1[0:crossoverIndex])
-        child.extend(self.p2[crossoverIndex:])
+        #child.extend(self.p1[0:crossoverIndex])
+
+        child.extend(self.boards[self.p1][0:crossoverIndex])
+
+        #child.extend(self.p2[crossoverIndex:])
+
+        child.extend(self.boards[self.p2][crossoverIndex:])
+
         fit = self.calculateFitness(child)
-        print(fit)
-        return fit
+        print("Child = ", child, ";\tFitness = ", fit),
+        return child
 
 
     def genetic(self):
         newGeneration = {}
-        for i in range(len(self.boards)):
-            if len(self.boards) < 1:
-                return newGeneration
-            else:
-                self.p1, self.p2 = self.getParents()
-                self.child1 = self.crossover()
-            newGeneration[i] = self.child1
+        while len(newGeneration) < k:
+            for i in range(len(self.boards)):
+                print("boards = ", self.boards)
+                if len(self.boards) < 1:
+                    print("\nEMPTY BOARD\n")
+                    return newGeneration
+                else:
+                    self.p1, self.p2 = self.getParents()
+                    self.child1 = self.crossover()  # Have crossover return a list
+                    #print("Child = ", self.child1)
+                newGeneration[i] = self.child1
         return newGeneration
 
 
