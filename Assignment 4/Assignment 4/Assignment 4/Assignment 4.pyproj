@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>59aaf18e-4ee1-4c44-adfe-f717d330aae4</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Assignment_4.py</StartupFile>
+    <StartupFile>v2.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -16,7 +16,7 @@
     <InterpreterArguments>
     </InterpreterArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
-    <CommandLineArguments>4 4</CommandLineArguments>
+    <CommandLineArguments>8 8</CommandLineArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -28,6 +28,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assignment_4.py" />
+    <Compile Include="v2.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

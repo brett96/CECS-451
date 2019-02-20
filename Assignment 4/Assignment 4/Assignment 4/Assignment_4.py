@@ -125,13 +125,7 @@ class nQueens:
         
             print("Crossover index = ", crossoverInt)
             print("child 1 = ", child1)
-            parents[pcIdx] = parent1.getGeneticList()   # Add parents & children to respective dictionaries
-            children[pcIdx] = child1
-            pcIdx += 1
             print("child 2 = ", child2)
-            parents[pcIdx] = parent2.getGeneticList()
-            children[pcIdx] = child2
-            pcIdx += 1
 
         
             mutationProb1 = random.random()
@@ -142,10 +136,18 @@ class nQueens:
             if(mutationProb2 < 0.05):
                 child2 = self.mutation(child2)
 
+            parents[pcIdx] = parent1.getGeneticList()   # Add parents & children to respective dictionaries
+            children[pcIdx] = child1
+            pcIdx += 1
+
+            parents[pcIdx] = parent2.getGeneticList()
+            children[pcIdx] = child2
+            pcIdx += 1
+
             print("new child 1 = ", child1)
             print("new child 2 = ", child2)
-    
 
+        done = False    # Done if checkAttacks = 0
 
     def getChildCoordinates(self, parent):
         pass
