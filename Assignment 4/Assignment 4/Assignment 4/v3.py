@@ -6,7 +6,7 @@ import math
 n = int(sys.argv[1])
 k = int(sys.argv[2])
 MAX_FITNESS_SCORE = math.factorial(n) / math.factorial(2) / math.factorial(n-2)
-MAX_ITERATION = 10000
+MAX_ITERATION = 1000
 MUTATE_PROB = 0.1
 
 
@@ -242,7 +242,8 @@ def crossover(p1, p2):
     #child.setProbability(child.fitnessScore / sumFitness)
 
     
-    #print("\nChild: ", child.board, "\t",  child.fitnessScore,  "\t", child.probability, "\n")
+    #print("Child: ", child.board, "\t",  child.fitnessScore,  "\t", child.probability)
+    print("Child: ", child.board)
     return child
         
 # =============================================================================
@@ -281,6 +282,7 @@ def genetic(iteration):
         
     for i in range(len(population)):
         p1, p2 = getParents(population)
+        print("Parents: ", p1.board, "\t", p2.board)
         #print("\nParent 1: ", p1.board, "\t",  p1.fitnessScore,  "\t", p1.probability)
         #print("Parent 2: ", p2.board, "\t",  p2.fitnessScore,  "\t", p2.probability)
         
@@ -308,7 +310,7 @@ def genetic(iteration):
 #         return newGeneration
 # =============================================================================
 
-def isSolved():
+def isSolved(population):
     
     fitnessScores = [i.fitnessScore for i in population]
     #print (fitnessScores)
@@ -367,7 +369,7 @@ if __name__ == '__main__':
     #for p in population:
     #    print(p.board, "\t", p.fitnessScore, "\t", p.probability)
     
-    while not isSolved():
+    while not isSolved(population):
  
         population = genetic(iteration)
         iteration += 1
