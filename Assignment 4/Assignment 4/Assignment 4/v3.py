@@ -160,9 +160,9 @@ def mutate(child):
             while oldVal == newVal:
                 newVal = numpy.random.randint(n-1)
             child.board[i] = newVal
-            print("New board: ", child.board)
-            print("New fitness score: ", child.fitnessScore)
-            print("Changed: ", oldVal, " --> ", newVal, "at index: ", i, "\n")
+            fitnessCheck = calculateFitness(child.board)
+            while(fitnessCheck < 0):
+                oldVal = child.board[i]
                 newVal = numpy.random.randint(n-1)
                 while oldVal == newVal:
                     newVal = numpy.random.randint(n-1)   
