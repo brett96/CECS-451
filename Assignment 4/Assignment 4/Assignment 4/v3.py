@@ -3,63 +3,80 @@ import random
 import numpy
 import math
 
-n = int(sys.argv[1])
-k = int(sys.argv[2])
-MAX_FITNESS_SCORE = math.factorial(n) / math.factorial(2) / math.factorial(n-2)
+#number of queens
+n = int(sys.argv[1]) 
+#number of states
+k = int(sys.argv[2]) 
+#calculate max fitness scores based on n
+MAX_FITNESS_SCORE = math.factorial(n) / math.factorial(2) / math.factorial(n-2) 
+#number of iterations until stop
 MAX_ITERATION = 100
+#probability of mutation
 MUTATE_PROB = 0.1
 
 class nQueens:
     def __init__(self):
+        #location of queens on board
         self.board = None
+        #fitness score of the entire board
         self.fitnessScore = None
+        #probability of board being chosen
         self.probability = None
-    
+    #set all attributes of board
     def setValues(self, board, fitnessScore, probability):
         self.board = board
         self.fitnessScore = fitnessScore
         self.probability = probability
-    
+    #set board
     def setBoard(self, board):
         self.board = board
+    #set fitness score
     def setFitnessScore(self, fitnessScore):
         self.fitnessScore = fitnessScore
+    #set probability
     def setProbability(self, probability):
         self.probability = probability
+    #get board
     def getBoard(self):
         return self.board
+    #get fitness
     def getFitnessScore(self):
         return self.fitnessScore
+    #get probability
     def getProbability(self):
         return self.probability
-        
+ 
+#make a randomized board of queen locations       
 def makeGeneticList():
     board = numpy.arange(n)
     numpy.random.shuffle(board)
     return board
 
+#make a population list of size k
 def makePopulationList(populationSize):
+    #generate nQueens objects
     population = [nQueens() for i in range(populationSize)]
+    #generate boards for each nQueens
     for i in range(populationSize):
         population[i].setBoard(makeGeneticList())
+        #calculate fitness scores and make sure it is non negative
         fitnessCheck = calculateFitness(population[i].board)
         while(fitnessCheck < 0):
             population[i].setBoard(makeGeneticList())
-            fitnessCheck = calculateFitness(population[i].board)      
+            fitnessCheck = calculateFitness(population[i].board)    
+        #set fitness score to the nQueen object
         population[i].setFitnessScore(fitnessCheck)
-        #print(population[i].board)
-        #print("Population fitness: ", population[i].fitnessScore)
     return population
-        
+
+#calculate fitness score of a board
 def calculateFitness(board):
-    #number of conflicts
+    #number of total conflicts
     conflicts = 0
-    rcConflicts  = 0
+    #number of row/column conflicts
+    rcConflicts  = 0 
     #calculate conflicts for rows && columns
     rcConflicts += abs(len(board) - len(numpy.unique(board)))
     conflicts += rcConflicts
-    #print("row and column conflicts: ", rcConflicts)
-    
     #calculate diagonal conflicts
     for i in range(len(board)):
         for j in range(len(board)):
@@ -68,69 +85,54 @@ def calculateFitness(board):
                 ySlope = abs(board[i] - board[j])
                 if(xSlope == ySlope):
                     conflicts += 1
-    
-    #print("diagonal conflicts: ", conflicts - rcConflicts)
-    
-    score = (MAX_FITNESS_SCORE - conflicts) * 1.0
-    #print("conflicts: " , conflicts)
-    #print("max fitness score: ", MAX_FITNESS_SCORE)
-    #print("fitness score: ", score)
-    return score
-        
+    return MAX_FITNESS_SCORE - conflicts
 
+#selection algorithm used to select parents based on their probability and randomization
 def roulleteWheelSelection(population):
+    #total sum of all fitness scores in popoulation
     sumFitness = sum([i.fitnessScore for i in population])
+    #generate a random number betwen 0 and S
     randomPick = random.uniform(0, sumFitness)
-    #print("Random pick: ",randomPick)
+    #current sum
     current = 0
+    #start from the beginning of populationa nd keep adding current to fitness score
+    #until current > randomPick
     for p in population:
         #print(p.fitnessScore)
         current += p.fitnessScore
         if current > randomPick:
             return p
 
-#def tournamentSelection(population):
-#    best = None
-#    for i=1 to k:
-#        ind = population[random(1, n)]
-#        if (best == None) or ind.fitnessScore >
-
-
-
+#get parents from population      
 def getParents(population):
+    #parent 1
     p1 = None
-    p2 = None
-    
-    while (p1 is None or p2 is None) and ( p1 == p2) :
+    #parent 2
+    p2 = None 
+    #choose parents that are different from each other
+    while (p1 is None or p2 is None) and ( p1 == p2):
         p1 = roulleteWheelSelection(population)
         p2 = roulleteWheelSelection(population)
-        
-        #sumFitness = numpy.sum([i.fitnessScore for i in population])
-        #for p in population:
-        #    p.probability = p.fitnessScore / sumFitness
-        #print("P probability: ",p.board, "\t",  p.probability, "\t", p.fitnessScore, "/", sumFitness)   
-        # sumFitness = sum([i.fitnessScore for i in population])
-        #selectionProbs = [i.fitnessScore / sumFitness for i in population]
-        #p1 = population[numpy.random.choice(len(population), p = selectionProbs)]
-        #p2 = population[numpy.random.choice(len(population), p = selectionProbs)]
-        
+    #checks if parents are not none and returns them        
     if p1 is not None and p2 is not None:
         return p1, p2
     else:
         sys.exit(-1)
-           
+  
+#crossover between two parents         
 def crossover(p1, p2):
+    #random index where the crossover begins
     crossoverIndex = random.randint(0, k - 1)
-    
-    child = nQueens()   
+    #initialize child object
+    child = nQueens() 
+    #creates a board to with p1[0: index] + p2[index:]
     cBoard = []
     cBoard.extend(p1.board[0:crossoverIndex])
     cBoard.extend(p2.board[crossoverIndex:])
+    #set the child board
     child.setBoard(cBoard)
-    
-    fitnessCheck = calculateFitness(child.board)
-    #sumFitness = numpy.sum([i.fitnessScore for i in population])
-    
+    #calculates fitness and ch
+    fitnessCheck = calculateFitness(child.board)    
     while(fitnessCheck < 0):
         p1, p2 = getParents(population)
         cBoard = []
@@ -138,74 +140,72 @@ def crossover(p1, p2):
         cBoard.extend(p2.board[crossoverIndex:])  
         child.setBoard(cBoard)
         fitnessCheck = calculateFitness(child.board)
-
-        
-    child.setFitnessScore(fitnessCheck)
-    #child.setProbability(child.fitnessScore / sumFitness)
-
-    
-    #print("Child: ", child.board, "\t",  child.fitnessScore,  "\t", child.probability)
-    #print("Child: ", child.board)
+    #calculate fitness score of child and make sure it is non negative  
+    child.setFitnessScore(fitnessCheck)    
     return child
 
+#mutation of child
 def mutate(child):     
+    #goes through the entire child board
     for i in range(len(child.board)):
+        #generates a random value and if its less than the initialized  mutation prob --> mutate
         if  random.random() < MUTATE_PROB:
-            #print("Mutated")
-            #print("Old board: ", child.board)
-            #print("Old fitness score: ", child.fitnessScore)
-            #mutationIndex = numpy.random.randint(n-1)
             oldVal = child.board[i]
             newVal = numpy.random.randint(n-1)
+            #makes sure that the new mutation value is differerent than the old value
             while oldVal == newVal:
                 newVal = numpy.random.randint(n-1)
             child.board[i] = newVal
+             #calculate new fitness score of child and make sure it is non negative 
             fitnessCheck = calculateFitness(child.board)
             while(fitnessCheck < 0):
                 oldVal = child.board[i]
                 newVal = numpy.random.randint(n-1)
+                #makes sure that the new mutation value is differerent than the old value
                 while oldVal == newVal:
                     newVal = numpy.random.randint(n-1)   
                 child.board[i] = newVal
                 fitnessCheck = calculateFitness(child.board)
+            #set the new fitness score
             child.setFitnessScore(fitnessCheck)
-            #child.setFitnessScore(calculateFitness(child.board))
-            #print("New board: ", child.board)
-            #print("New fitness score: ", child.fitnessScore)
-            #print("Changed: ", oldVal, " --> ", newVal, "at index: ", i, "\n")
     return child
 
+#genetic algorithm
 def genetic(population, iteration):
     print (" #"*10 ,"Executing Genetic  generation : ", iteration + 1 , " #"*10)
+    #define new generation of population
     newGeneration = []
+    #initialize nqueens objects for each item in population
     newGeneration = [nQueens() for i in range(len(population))]
-        
+    #create and fill the new population with new children
     for i in range(len(population)):
+        #get the parents
         p1, p2 = getParents(population)
-        #print("Parents: ", p1.board, "\t", p2.board)
-        #print("\nParent 1: ", p1.board, "\t",  p1.fitnessScore,  "\t", p1.probability)
-        #print("Parent 2: ", p2.board, "\t",  p2.fitnessScore,  "\t", p2.probability)
+        #create a child
         c = crossover(p1,p2)
+        #mutates the child
         c = mutate(c)
+        #adds the child to the new generation
         newGeneration[i].setValues(c.board, c.fitnessScore, c.probability)
-    
+    #append the new generation to the population
     population.append(newGeneration)
-    
-    #print("New Generation: ")
-    for  g in newGeneration:
-        print(g.board, "\t",  g.fitnessScore)
-    
+    #for  g in newGeneration:
+    #    print(g.board, "\t",  g.fitnessScore)
     return newGeneration
-                  
+
+#loop to continue until solution is found
 def isSolved(population):
+    #list of all fitness scores in population
     fitnessScores = [i.fitnessScore for i in population]
-    #print (fitnessScores)
+    #if the  answer is in the list --> return true to end the program
     if MAX_FITNESS_SCORE in fitnessScores:
         return True
+    #if the iteration goes until the max --> return true to end the program
     if iteration == MAX_ITERATION:
        return True
     return False
 
+#return the max fitness score found
 def maxFitnessScoreFound(population):
     fitnessScores = [i.fitnessScore for i in population]
     return max(fitnessScores)    
@@ -217,26 +217,28 @@ if __name__ == '__main__':
     maxScoreFound = 0
     maxScoreFounds = []
     
-    print("\nOriginal Population: ")
-    for p in population:
-        print(p.board, "\t", p.fitnessScore)
+    #print("\nOriginal Population: ")
+   # for p in population:
+        #print(p.board, "\t", p.fitnessScore)
     
     while not isSolved(population):
- 
+        #initialize genetic algorithm
         population = genetic(population, iteration)
         iteration += 1
         
+        #finds the max fitness score
         if(maxScoreFound < maxFitnessScoreFound(population)):
             maxScoreFound = maxFitnessScoreFound(population)
             maxScoreFounds.append(iteration)
     
-    print ("Iterations: ", iteration)
-     
+    print ("\nIterations: ", iteration)
+    #if max fitness score is found in search
     if MAX_FITNESS_SCORE in [i.fitnessScore for i in population]:
         print ("Successful boards: ") 
         for each in population:
             if each.fitnessScore == MAX_FITNESS_SCORE :
                 print(each.board, "\t", each.fitnessScore)
+    #if max fitness score not found in search
     else:
         print("Max fitness score found: ", maxScoreFound)
         print("Max fitness score lists amount: ",  len(maxScoreFounds))
