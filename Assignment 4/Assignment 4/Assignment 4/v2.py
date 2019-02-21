@@ -14,7 +14,6 @@ class nQueens:
         self.probabilities = {}
         self.p1 = None
         self.p2 = None
-        self.child1 = None
         
         pass
 
@@ -29,6 +28,10 @@ class nQueens:
         populationSize = k
         for i in range(populationSize):
             self.boards[i] = self.makeGeneticList()
+            self.fitnesses[i] = self.calculateFitness(self.boards[i])
+
+    def updateFitnesses(self):
+        for i in range(len(self.boards)):
             self.fitnesses[i] = self.calculateFitness(self.boards[i])
 
     def calculateFitness(self, list):
@@ -62,6 +65,8 @@ class nQueens:
         max = f(n) / f(2) / f(n - 2)
         #print("Boards = ", self.boards)
         fVals = [self.calculateFitness(l) for l in self.boards.values()]
+        for i in range(len(self.boards)):
+            self.fitnesses[i] = self.calculateFitness(self.boards[i])
         print("max = ", max)
         print("fVals = ", fVals)
         # fVals filled w/ 'max' in each index after 1st call of isSolved?
@@ -74,9 +79,8 @@ class nQueens:
         globals()
         self.p1, self.p2 = None, None
         total = np.sum([self.calculateFitness(l) for l in self.boards.values()])
-        print("fitnesses = ", self.fitnesses)
         for i in range(len(self.boards)):
-            self.probabilities[i] = self.fitnesses[i] / (total*1.0)
+            self.probabilities[i] = self.fitnesses[i] / (total)
         while True and len(self.boards) > 0:
             p1Rand = np.random.rand()
             p1RN = [x for x in self.boards if self.probabilities[x] <= p1Rand]
@@ -97,51 +101,71 @@ class nQueens:
                 else:
                     print("Equal Parents")
                     continue
-            except:
-                print("Exception")
-                continue
+            except Exception as e: print(e)
+
         if self.p1 is not None and self.p2 is not None:
             return self.p1, self.p2
         else:
             sys.exit(-1)
 
+    def mutate(self, childList):
+        result = childList
+        fitness = self.calculateFitness(childList)
+        total = np.sum([self.calculateFitness(l) for l in self.boards.values()])
+        probability = fitness / total
+        if probability < .05:
+            newVal = np.random.randint(n)
+            result[newVal] = np.random.randint(n)
+        return result
 
 
     def crossover(self):
-        s = self.boards[self.p1]
-        print("s = ", s)
         #if s.isnumeric():
         #    return []
         globals()
         crossoverIndex = random.randint(1, k - 1)
-        child = []
-        print(self.p1)
+        child1 = []
+        child2 = []
         #child.extend(self.p1[0:crossoverIndex])
 
-        child.extend(self.boards[self.p1][0:crossoverIndex])
+        child1.extend(self.boards[self.p1][0:crossoverIndex])
 
         #child.extend(self.p2[crossoverIndex:])
 
-        child.extend(self.boards[self.p2][crossoverIndex:])
+        child1.extend(self.boards[self.p2][crossoverIndex:])
+        child2.extend(self.boards[self.p2][0:crossoverIndex])
+        child2.extend(self.boards[self.p1][crossoverIndex:])
 
-        fit = self.calculateFitness(child)
-        print("Child = ", child, ";\tFitness = ", fit),
-        return child
+        return child1, child2
 
 
     def genetic(self):
         newGeneration = {}
-        while len(newGeneration) < k:
-            for i in range(len(self.boards)):
-                print("boards = ", self.boards)
-                if len(self.boards) < 1:
-                    print("\nEMPTY BOARD\n")
-                    return newGeneration
-                else:
-                    self.p1, self.p2 = self.getParents()
-                    self.child1 = self.crossover()  # Have crossover return a list
-                    #print("Child = ", self.child1)
-                newGeneration[i] = self.child1
+        #while len(newGeneration) < k:
+        for board in self.boards:
+            self.p1, self.p2 = self.getParents()
+
+
+        i = 0
+        while i < len(self.boards):
+            print("boards = ", self.boards)
+            if len(self.boards) < 1:
+                print("\nEMPTY BOARD\n")
+                return newGeneration
+            else:
+                # Same child gets added every time
+                self.p1, self.p2 = self.getParents()
+                child1, child2 = self.crossover()  # Have crossover return a list
+                #print("Child = ", self.child1)
+            child1 = self.mutate(child1)
+            child2 = self.mutate(child2) 
+            print("Child1 = ", child1, ";\tFitness = ", self.calculateFitness(child1))
+            print("Child2 = ", child2, ";\tFitness =", self.calculateFitness(child2))
+            newGeneration[i] = child1
+            i += 1
+            newGeneration[i] = child2
+            i += 1
+        print("new generation = ", newGeneration)
         return newGeneration
 
 
@@ -151,10 +175,10 @@ if __name__ == '__main__':
     controller.makePopulationList()
     while not controller.isSolved():
         controller.boards = controller.genetic()
-        print("Parent 1 = ", controller.p1)
-        print("Parent 2 = ", controller.p2)
+        controller.updateFitnesses()
+        #print("Parent 1 = ", controller.boards[controller.p1])
+        #print("Parent 2 = ", controller.boards[controller.p2])
 
 
 
-
-
+        
