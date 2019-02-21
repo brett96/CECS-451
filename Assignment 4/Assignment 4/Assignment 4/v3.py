@@ -6,8 +6,8 @@ import math
 n = int(sys.argv[1])
 k = int(sys.argv[2])
 MAX_FITNESS_SCORE = math.factorial(n) / math.factorial(2) / math.factorial(n-2)
-MAX_ITERATION = 1000
-MUTATE_PROB = 0.05
+MAX_ITERATION = 100
+MUTATE_PROB = 0.1
 
 class nQueens:
     def __init__(self):
@@ -47,9 +47,9 @@ def makePopulationList(populationSize):
         fitnessCheck = calculateFitness(population[i].board)
         
         
-        #while(fitnessCheck < 0):
-        #    population[i].setBoard(makeGeneticList())
-        #    fitnessCheck = calculateFitness(population[i].board)    
+        while(fitnessCheck < 0):
+            population[i].setBoard(makeGeneticList())
+            fitnessCheck = calculateFitness(population[i].board)    
             
         population[i].setFitnessScore(fitnessCheck)
         #print(population[i].board)
@@ -78,7 +78,7 @@ def calculateFitness(board):
     #print("diagonal conflicts: ", conflicts - rcConflicts)
     
     
-    score = MAX_FITNESS_SCORE - conflicts
+    score = (MAX_FITNESS_SCORE - conflicts) * 1.0
     #print("conflicts: " , conflicts)
     #print("max fitness score: ", MAX_FITNESS_SCORE)
     #print("fitness score: ", score)
@@ -173,12 +173,16 @@ def mutate(child):
         if  random.random() < MUTATE_PROB:
             print("Mutated")
             print("Old board: ", child.board)
+            print("Old fitness score: ", child.fitnessScore)
             #mutationIndex = numpy.random.randint(n-1)
             oldVal = child.board[i]
             newVal = numpy.random.randint(n-1)
+            while oldVal == newVal:
+                newVal = numpy.random.randint(n-1)
             child.board[i] = newVal
             child.setFitnessScore(child.board[i])
             print("New board: ", child.board)
+            print("New fitness score: ", child.fitnessScore)
             print("Changed: ", oldVal, " --> ", newVal, "at index: ", i, "\n")
     return child
 
