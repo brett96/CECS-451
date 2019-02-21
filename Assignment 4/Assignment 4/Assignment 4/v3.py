@@ -185,7 +185,7 @@ def genetic(population, iteration):
     
     print (" #"*10 ,"Executing Genetic  generation : ", iteration + 1 , " #"*10)
     newGeneration = []
-    newGeneration = [nQueens() for i in range(populationSize)]
+    newGeneration = [nQueens() for i in range(len(population))]
         
     for i in range(len(population)):
         p1, p2 = getParents(population)
