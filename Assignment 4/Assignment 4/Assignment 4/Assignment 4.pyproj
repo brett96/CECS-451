@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>59aaf18e-4ee1-4c44-adfe-f717d330aae4</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>v2.py</StartupFile>
+    <StartupFile>v3.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -16,7 +16,7 @@
     <InterpreterArguments>
     </InterpreterArguments>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
-    <CommandLineArguments>8 8</CommandLineArguments>
+    <CommandLineArguments>5 6</CommandLineArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -28,7 +28,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assignment_4.py" />
+    <Compile Include="chromosome.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nqueens.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="solve.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="v2.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="v3.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

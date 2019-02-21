@@ -43,7 +43,6 @@ class nQueens:
     def generateStates(self):   # Genrate 'k' states
         agents = {} # Dictionary assigning each agent an int value
         fitnesses = {}  # Dictionary assigning each agent's int to its fitness
-        
         for i in range(0, self.k):
             agent = nQueens()
 

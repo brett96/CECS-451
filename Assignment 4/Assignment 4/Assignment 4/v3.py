@@ -193,6 +193,15 @@ def genetic(population, iteration):
     #    print(g.board, "\t",  g.fitnessScore)
     return newGeneration
 
+def lastResort():
+    values = numpy.arange(n)
+    fitness = 0
+    while fitness < MAX_FITNESS_SCORE:
+        numpy.random.shuffle(values )
+        fitness = calculateFitness(values)
+        print(values)
+    print(values)
+
 #loop to continue until solution is found
 def isSolved(population):
     #list of all fitness scores in population
@@ -202,6 +211,8 @@ def isSolved(population):
         return True
     #if the iteration goes until the max --> return true to end the program
     if iteration == MAX_ITERATION:
+       lastResort()
+       print("Last Resort")
        return True
     return False
 
@@ -242,6 +253,4 @@ if __name__ == '__main__':
     else:
         print("Max fitness score found: ", maxScoreFound)
         print("Max fitness score lists amount: ",  len(maxScoreFounds))
-        print("Max fitness score found list: ", maxScoreFounds)
-
-
+print("Max fitness score found list: ", maxScoreFounds)
