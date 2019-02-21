@@ -6,7 +6,7 @@ import math
 n = int(sys.argv[1])
 k = int(sys.argv[2])
 MAX_FITNESS_SCORE = math.factorial(n) / math.factorial(2) / math.factorial(n-2)
-MAX_ITERATION = 100
+MAX_ITERATION = 1000
 MUTATE_PROB = 0.1
 
 class nQueens:
@@ -136,26 +136,21 @@ def crossover(p1, p2):
     crossoverIndex = random.randint(0, k - 1)
     
     child = nQueens()   
-    
     cBoard = []
-
-
     cBoard.extend(p1.board[0:crossoverIndex])
     cBoard.extend(p2.board[crossoverIndex:])
-
-    
     child.setBoard(cBoard)
     
     fitnessCheck = calculateFitness(child.board)
     #sumFitness = numpy.sum([i.fitnessScore for i in population])
     
-    #while(fitnessCheck < 0):
-    #    p1, p2 = getParents(population)
-    #    cBoard = []
-    #    cBoard.extend(p1.board[0:crossoverIndex])
-    #    cBoard.extend(p2.board[crossoverIndex:])  
-    #    child.setBoard(cBoard)
-    #    fitnessCheck = calculateFitness(child.board)
+    while(fitnessCheck < 0):
+        p1, p2 = getParents(population)
+        cBoard = []
+        cBoard.extend(p1.board[0:crossoverIndex])
+        cBoard.extend(p2.board[crossoverIndex:])  
+        child.setBoard(cBoard)
+        fitnessCheck = calculateFitness(child.board)
 
         
     child.setFitnessScore(fitnessCheck)
@@ -180,7 +175,7 @@ def mutate(child):
             while oldVal == newVal:
                 newVal = numpy.random.randint(n-1)
             child.board[i] = newVal
-            child.setFitnessScore(child.board[i])
+            child.setFitnessScore(calculateFitness(child.board))
             print("New board: ", child.board)
             print("New fitness score: ", child.fitnessScore)
             print("Changed: ", oldVal, " --> ", newVal, "at index: ", i, "\n")
