@@ -6,7 +6,7 @@ import math
 n = int(sys.argv[1])
 k = int(sys.argv[2])
 MAX_FITNESS_SCORE = math.factorial(n) / math.factorial(2) / math.factorial(n-2)
-MAX_ITERATION = 100
+MAX_ITERATION = 1000
 MUTATE_PROB = 0.05
 
 class nQueens:
@@ -177,6 +177,7 @@ def mutate(child):
             oldVal = child.board[i]
             newVal = numpy.random.randint(n-1)
             child.board[i] = newVal
+            child.setFitnessScore(child.board[i])
             print("New board: ", child.board)
             print("Changed: ", oldVal, " --> ", newVal, "at index: ", i, "\n")
     return child
@@ -194,6 +195,7 @@ def genetic(population, iteration):
         #print("Parent 2: ", p2.board, "\t",  p2.fitnessScore,  "\t", p2.probability)
         
         c = crossover(p1,p2)
+        
         c = mutate(c)
             
         newGeneration[i].setValues(c.board, c.fitnessScore, c.probability)
@@ -202,7 +204,7 @@ def genetic(population, iteration):
     
     #print("New Generation: ")
     for  g in newGeneration:
-        print(g.board, "\t",  g.fitnessScore, "\t",  g.probability)
+        print(g.board, "\t",  g.fitnessScore, "\t")
     
     return newGeneration
                   
