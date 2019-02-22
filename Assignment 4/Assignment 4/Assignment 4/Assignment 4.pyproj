@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>59aaf18e-4ee1-4c44-adfe-f717d330aae4</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>v3.py</StartupFile>
+    <StartupFile>n-queens.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -43,7 +43,7 @@
     <Compile Include="v2.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="v3.py">
+    <Compile Include="n-queens.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

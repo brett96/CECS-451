@@ -2,6 +2,7 @@ import sys
 import random
 import numpy
 import math
+import statistics
 import matplotlib.pyplot as plt
 
 #number of queens
@@ -20,20 +21,20 @@ class nQueens:
         #location of queens on board
         self.board = None
         #fitness score of the entire board
-        self.fitnessScore = None
+        self.fitness = None
         #probability of board being chosen
         self.probability = None
     #set all attributes of board
     def setValues(self, board, fitnessScore, probability):
         self.board = board
-        self.fitnessScore = fitnessScore
+        self.fitness = fitnessScore
         self.probability = probability
     #set board
     def setBoard(self, board):
         self.board = board
     #set fitness score
     def setFitnessScore(self, fitnessScore):
-        self.fitnessScore = fitnessScore
+        self.fitness = fitnessScore
     #set probability
     def setProbability(self, probability):
         self.probability = probability
@@ -42,7 +43,7 @@ class nQueens:
         return self.board
     #get fitness
     def getFitnessScore(self):
-        return self.fitnessScore
+        return self.fitness
     #get probability
     def getProbability(self):
         return self.probability
@@ -74,10 +75,9 @@ def calculateFitness(board):
     #number of total conflicts
     attacks = 0
     #number of row/column conflicts
-    #rcConflicts  = 0 
     #calculate conflicts for rows && columns
     attacks += abs(len(board) - len(numpy.unique(board)))
-    #conflicts += rcConflicts
+
     #calculate diagonal conflicts
     for diagonal1 in range(len(board)):
         for diagonal2 in range(len(board)):
@@ -91,7 +91,7 @@ def calculateFitness(board):
 #selection algorithm used to select parents based on their probability and randomization
 def selection(population):
     #total sum of all fitness scores in popoulation
-    sumFitness = sum([i.fitnessScore for i in population])
+    sumFitness = sum([i.fitness for i in population])
     #generate a random number betwen 0 and S
     randomPick = random.uniform(0, sumFitness)
     #current sum
@@ -100,7 +100,7 @@ def selection(population):
     #until current > randomPick
     for p in population:
         #print(p.fitnessScore)
-        current += p.fitnessScore
+        current += p.fitness
         if current > randomPick:
             return p
 
@@ -190,7 +190,7 @@ def newGeneration(population, iteration):
         #mutates the child
         c = mutate(c)
         #adds the child to the new generation
-        newGeneration[i].setValues(c.board, c.fitnessScore, c.probability)
+        newGeneration[i].setValues(c.board, c.fitness, c.probability)
     #append the new generation to the population
     population.append(newGeneration)
     #for  g in newGeneration:
@@ -200,23 +200,14 @@ def newGeneration(population, iteration):
 #loop to continue until solution is found
 def isSolved(population, iteration):
     #list of all fitness scores in population
-    fitnessScores = [i.fitnessScore for i in population]
+    fitnessScores = [i.fitness for i in population]
     #if the  answer is in the list --> return true to end the program
     if MAX_FITNESS_SCORE in fitnessScores:
         return True
     #if the iteration goes until the max --> return true to end the program
     if iteration == MAX_ITERATION:
-        #print ("\n","#"*20 ,"RESETTING POPULATION", "#"*20,"\n")
-        #iteration = 0
-        #reset()
         return True
     return False
-
-#reset the entire program to create a new population
-#reseting is necessary due to poor parent selection
-def reset():
-    #iteration = 0
-    main()
 
 #return the max fitness score found
 def maxFitnessScoreFound(population):
@@ -224,7 +215,7 @@ def maxFitnessScoreFound(population):
     return max(fitnessScores)    
 
 def main():
-    iteration = 0
+    iteration = 1
     populationSize = k
     states = makePopulationList(populationSize)
     #Begin genetic algorithm recursion
@@ -235,39 +226,53 @@ def main():
     
     #If max fitness score is found in search
 
-    if MAX_FITNESS_SCORE in [i.fitnessScore for i in states]:
+    if MAX_FITNESS_SCORE in [state.fitness for state in states]:
         print ("\nIterations: ", iteration)
         print ("Successful boards: ") 
         for state in states:
-            if state.fitnessScore == MAX_FITNESS_SCORE :
+            if state.fitness == MAX_FITNESS_SCORE :
                 state.board = list(state.board)
                 print(state.board)
+                # Generate empty nxn board
                 stateView = [['-' for i in range(n)] for j in range(n)]
+                # Generate coordinates of queens based off of board list
                 queenCoordinates = []
                 for value in state.board:
                     queenCoordinates.append((state.board.index(value), value))
+                # Place queens on the board
                 for coordinate in queenCoordinates:
                     stateView[coordinate[0]][coordinate[1]] = 'q'
+                # Print board as 2-D array
                 print(numpy.array(stateView))
         return iteration
 
 if __name__ == "__main__":
+    # Keep track of frequency of results
     iterationCounts = {}
+    # Do 100 simulations of the program
     for i in range(0, 100):
         count = main()
         while count is None:
             count = main()
         iterationCounts[i] = count
         
+    # Calculate descriptive statistics and generate histogram
     results = set(iterationCounts.values())
     results = list(results)
     resultCounts = {}
     for result in results:
-        resultCounts[result] = 0
+        resultCounts[result] = 1
     for result in iterationCounts.values():
         resultCounts[result] += 1
-    print(resultCounts)
+    
+    print("Average number of steps = ", round(statistics.mean(iterationCounts.values()), 2))    
+    print("Median number of steps = ", statistics.median(iterationCounts.values()))
+    print("Lowest number of steps needed = ", min(iterationCounts.values()))
+    print("Most number of steps needed = ", max(iterationCounts.values()))
+      
+    # Set x and y axis
     plt.stem(resultCounts.keys(), resultCounts.values())
+    # Set x and y labels
     plt.xlabel("Required number of steps")
     plt.ylabel("Occurrences")
     plt.show()
