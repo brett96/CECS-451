@@ -13,6 +13,8 @@ MAX_FITNESS_SCORE = math.factorial(n) / math.factorial(2) / math.factorial(n-2)
 MAX_ITERATION = 100
 #probability of mutation
 MUTATE_PROB = 0.1
+#iterator
+
 
 class nQueens:
     def __init__(self):
@@ -120,7 +122,7 @@ def getParents(population):
         sys.exit(-1)
   
 #crossover between two parents         
-def crossover(p1, p2):
+def crossover(p1, p2, population):
     #random index where the crossover begins
     crossoverIndex = random.randint(0, k - 1)
     #initialize child object
@@ -142,6 +144,9 @@ def crossover(p1, p2):
         fitnessCheck = calculateFitness(child.board)
     #calculate fitness score of child and make sure it is non negative  
     child.setFitnessScore(fitnessCheck)    
+    
+    print("Parents: ", p1.board, "\t", p2.board)
+    print("Child: ", child.board)
     return child
 
 #mutation of child
@@ -172,7 +177,7 @@ def mutate(child):
 
 #genetic algorithm
 def genetic(population, iteration):
-    print (" #"*10 ,"Executing Genetic  generation : ", iteration + 1 , " #"*10)
+    print (" #"*10 ,"Executing Genetic  generation : ", iteration , " #"*10)
     #define new generation of population
     newGeneration = []
     #initialize nqueens objects for each item in population
@@ -182,7 +187,7 @@ def genetic(population, iteration):
         #get the parents
         p1, p2 = getParents(population)
         #create a child
-        c = crossover(p1,p2)
+        c = crossover(p1,p2, population)
         #mutates the child
         c = mutate(c)
         #adds the child to the new generation
@@ -193,17 +198,10 @@ def genetic(population, iteration):
     #    print(g.board, "\t",  g.fitnessScore)
     return newGeneration
 
-def lastResort():
-    values = numpy.arange(n)
-    fitness = 0
-    while fitness < MAX_FITNESS_SCORE:
-        numpy.random.shuffle(values )
-        fitness = calculateFitness(values)
-        print(values)
-    print(values)
+
 
 #loop to continue until solution is found
-def isSolved(population):
+def isSolved(population, iteration):
     #list of all fitness scores in population
     fitnessScores = [i.fitnessScore for i in population]
     #if the  answer is in the list --> return true to end the program
@@ -211,28 +209,40 @@ def isSolved(population):
         return True
     #if the iteration goes until the max --> return true to end the program
     if iteration == MAX_ITERATION:
-       lastResort()
-       print("Last Resort")
-       return True
+        print ("\n","#"*20 ,"RESETTING BOARD", "#"*20,"\n")
+        reset()
+        return True
     return False
+
+#reset the entire program to create a new population
+def reset():
+    main()
+
+# =============================================================================
+# def lastResort():
+#     values = numpy.arange(n)
+#     fitness = 0
+#     while fitness < MAX_FITNESS_SCORE:
+#         numpy.random.shuffle(values )
+#         fitness = calculateFitness(values)
+#         print(values)
+#     print(values)
+# =============================================================================
 
 #return the max fitness score found
 def maxFitnessScoreFound(population):
     fitnessScores = [i.fitnessScore for i in population]
     return max(fitnessScores)    
 
-if __name__ == '__main__':
+def main():
     iteration = 0
     populationSize = k
     population = makePopulationList(populationSize)
     maxScoreFound = 0
     maxScoreFounds = []
     
-    #print("\nOriginal Population: ")
-   # for p in population:
-        #print(p.board, "\t", p.fitnessScore)
-    
-    while not isSolved(population):
+    while not isSolved(population, iteration):
+        
         #initialize genetic algorithm
         population = genetic(population, iteration)
         iteration += 1
@@ -243,14 +253,17 @@ if __name__ == '__main__':
             maxScoreFounds.append(iteration)
     
     print ("\nIterations: ", iteration)
+    
     #if max fitness score is found in search
     if MAX_FITNESS_SCORE in [i.fitnessScore for i in population]:
         print ("Successful boards: ") 
         for each in population:
             if each.fitnessScore == MAX_FITNESS_SCORE :
-                print(each.board, "\t", each.fitnessScore)
+                print(each.board)
     #if max fitness score not found in search
-    else:
-        print("Max fitness score found: ", maxScoreFound)
-        print("Max fitness score lists amount: ",  len(maxScoreFounds))
-print("Max fitness score found list: ", maxScoreFounds)
+    #else:
+    #    print("Max fitness score found: ", maxScoreFound)
+    #    print("Max fitness score lists amount: ",  len(maxScoreFounds))
+    #print("Max fitness score found list: ", maxScoreFounds)
+if __name__ == "__main__":
+    main()
