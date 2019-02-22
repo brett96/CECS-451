@@ -72,24 +72,24 @@ def makePopulationList(populationSize):
 #calculate fitness score of a board
 def calculateFitness(board):
     #number of total conflicts
-    conflicts = 0
+    attacks = 0
     #number of row/column conflicts
-    rcConflicts  = 0 
+    #rcConflicts  = 0 
     #calculate conflicts for rows && columns
-    rcConflicts += abs(len(board) - len(numpy.unique(board)))
-    conflicts += rcConflicts
+    attacks += abs(len(board) - len(numpy.unique(board)))
+    #conflicts += rcConflicts
     #calculate diagonal conflicts
-    for i in range(len(board)):
-        for j in range(len(board)):
-            if(i != j):
-                xSlope = abs(i-j)
-                ySlope = abs(board[i] - board[j])
-                if(xSlope == ySlope):
-                    conflicts += 1
-    return MAX_FITNESS_SCORE - conflicts
+    for diagonal1 in range(len(board)):
+        for diagonal2 in range(len(board)):
+            if(diagonal1 != diagonal2):
+                up = abs(diagonal1-diagonal2)
+                down = abs(board[diagonal1] - board[diagonal2])
+                if(up == down):
+                    attacks += 1
+    return MAX_FITNESS_SCORE - attacks
 
 #selection algorithm used to select parents based on their probability and randomization
-def roulleteWheelSelection(population):
+def selection(population):
     #total sum of all fitness scores in popoulation
     sumFitness = sum([i.fitnessScore for i in population])
     #generate a random number betwen 0 and S
@@ -112,8 +112,8 @@ def getParents(population):
     p2 = None 
     #choose parents that are different from each other
     while (p1 is None or p2 is None) and ( p1 == p2):
-        p1 = roulleteWheelSelection(population)
-        p2 = roulleteWheelSelection(population)
+        p1 = selection(population)
+        p2 = selection(population)
     #checks if parents are not none and returns them        
     if p1 is not None and p2 is not None:
         return p1, p2
@@ -175,7 +175,7 @@ def mutate(child):
     return child
 
 #genetic algorithm
-def genetic(population, iteration):
+def newGeneration(population, iteration):
     #print (" #"*10 ,"Executing Genetic  generation : ", iteration , " #"*10)
     #define new generation of population
     newGeneration = []
@@ -215,19 +215,8 @@ def isSolved(population, iteration):
 #reset the entire program to create a new population
 #reseting is necessary due to poor parent selection
 def reset():
-    iteration = 0
+    #iteration = 0
     main()
-
-# =============================================================================
-# def lastResort():
-#     values = numpy.arange(n)
-#     fitness = 0
-#     while fitness < MAX_FITNESS_SCORE:
-#         numpy.random.shuffle(values )
-#         fitness = calculateFitness(values)
-#         print(values)
-#     print(values)
-# =============================================================================
 
 #return the max fitness score found
 def maxFitnessScoreFound(population):
@@ -237,21 +226,29 @@ def maxFitnessScoreFound(population):
 def main():
     iteration = 0
     populationSize = k
-    population = makePopulationList(populationSize)
+    states = makePopulationList(populationSize)
     #Begin genetic algorithm recursion
-    while not isSolved(population, iteration):
+    while not isSolved(states, iteration):
         #initialize genetic algorithm
-        population = genetic(population, iteration)
+        states = newGeneration(states, iteration)
         iteration += 1
     
     #If max fitness score is found in search
 
-    if MAX_FITNESS_SCORE in [i.fitnessScore for i in population]:
+    if MAX_FITNESS_SCORE in [i.fitnessScore for i in states]:
         print ("\nIterations: ", iteration)
         print ("Successful boards: ") 
-        for each in population:
-            if each.fitnessScore == MAX_FITNESS_SCORE :
-                print(each.board)
+        for state in states:
+            if state.fitnessScore == MAX_FITNESS_SCORE :
+                state.board = list(state.board)
+                print(state.board)
+                stateView = [['-' for i in range(n)] for j in range(n)]
+                queenCoordinates = []
+                for value in state.board:
+                    queenCoordinates.append((state.board.index(value), value))
+                for coordinate in queenCoordinates:
+                    stateView[coordinate[0]][coordinate[1]] = 'q'
+                print(numpy.array(stateView))
         return iteration
 
 if __name__ == "__main__":
