@@ -13,8 +13,6 @@ MAX_FITNESS_SCORE = math.factorial(n) / math.factorial(2) / math.factorial(n-2)
 MAX_ITERATION = 100
 #probability of mutation
 MUTATE_PROB = 0.1
-#iterator
-
 
 class nQueens:
     def __init__(self):
@@ -198,8 +196,6 @@ def genetic(population, iteration):
     #    print(g.board, "\t",  g.fitnessScore)
     return newGeneration
 
-
-
 #loop to continue until solution is found
 def isSolved(population, iteration):
     #list of all fitness scores in population
@@ -209,12 +205,13 @@ def isSolved(population, iteration):
         return True
     #if the iteration goes until the max --> return true to end the program
     if iteration == MAX_ITERATION:
-        print ("\n","#"*20 ,"RESETTING BOARD", "#"*20,"\n")
+        print ("\n","#"*20 ,"RESETTING POPULATION", "#"*20,"\n")
         reset()
         return True
     return False
 
 #reset the entire program to create a new population
+#reseting is necessary due to poor parent selection
 def reset():
     main()
 
@@ -238,32 +235,20 @@ def main():
     iteration = 0
     populationSize = k
     population = makePopulationList(populationSize)
-    maxScoreFound = 0
-    maxScoreFounds = []
-    
+    #Begin genetic algorithm recursion
     while not isSolved(population, iteration):
-        
         #initialize genetic algorithm
         population = genetic(population, iteration)
         iteration += 1
-        
-        #finds the max fitness score
-        if(maxScoreFound < maxFitnessScoreFound(population)):
-            maxScoreFound = maxFitnessScoreFound(population)
-            maxScoreFounds.append(iteration)
     
-    print ("\nIterations: ", iteration)
-    
-    #if max fitness score is found in search
+    #If max fitness score is found in search
+
     if MAX_FITNESS_SCORE in [i.fitnessScore for i in population]:
+        print ("\nIterations: ", iteration)
         print ("Successful boards: ") 
         for each in population:
             if each.fitnessScore == MAX_FITNESS_SCORE :
                 print(each.board)
-    #if max fitness score not found in search
-    #else:
-    #    print("Max fitness score found: ", maxScoreFound)
-    #    print("Max fitness score lists amount: ",  len(maxScoreFounds))
-    #print("Max fitness score found list: ", maxScoreFounds)
+
 if __name__ == "__main__":
     main()
