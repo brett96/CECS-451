@@ -34,6 +34,9 @@
     <Compile Include="nqueens.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="part2.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="solve.py">
       <SubType>Code</SubType>
     </Compile>
