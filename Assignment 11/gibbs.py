@@ -1,4 +1,5 @@
 def gibbs(numSamples, x, e):
+	n = int(sys.argv[1])
 	counts = [0, 0, 0, 0]
 	nonEvidence = ["cloudy", "rain"]
 	currentState = [True, True, False, False]
