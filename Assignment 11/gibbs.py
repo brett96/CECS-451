@@ -21,5 +21,5 @@ def gibbs(numSamples, x, e):
 	return Normalize(N)
 
 def Normalize(N):
-	norm = [float(i)/max(N) for i in N]
+	norm = [float(i)/sum(raw) for i in raw]
 	pass
